@@ -8,7 +8,7 @@ Universal model is a model which can be used with any combination of following U
 
 ## Install
 
-    npm install --save universal-model
+    npm install --save universal-model-ng-react-svelte-vue
      
 ## Clean UI Architecture
 ![alt text](https://github.com/universal-model/universal-model-vue/raw/master/images/mvc.png "MVC")

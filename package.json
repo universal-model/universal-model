@@ -1,5 +1,5 @@
 {
-  "name": "universal-model",
+  "name": "universal-model-ng-react-svelte-vue",
   "version": "0.1.0",
   "description": "Universal model for Angular/React/Svelte/Vue",
   "main": "lib/index.js",
