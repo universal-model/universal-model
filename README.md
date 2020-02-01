@@ -71,8 +71,8 @@ Universal model is a model which can be used with any combination of following U
     useStateAndSelectorsNg(this, { componentAState }, { selector1, selector2 });
     
 ### Svelte
-    const [componentAState] = useStateSvelter([state.componentAState]);
-    const [selector1, selector2] = useSelectorsSvelte([selectors.selector1, selectors.selector2]);
+    const [componentAState] = useStateSvelter(id, [state.componentAState]);
+    const [selector1, selector2] = useSelectorsSvelte(id, [selectors.selector1, selectors.selector2]);
 
 ## API Examples
 **Create initial states**
@@ -232,9 +232,9 @@ Components should use only their own state and access other components' states u
 provided by those components. This will ensure encapsulation of each component's state.
     
     <script>  
-      const [componentAState] = useState([store.getState().componentAState]);
+      const [componentAState] = useState('componentA', [store.getState().componentAState]);
       const selectors = store.getSelectors();
-      const [selector1, selector2] = useSelectors([selectors.selector1, selectors.selector2]);    
+      const [selector1, selector2] = useSelectors('componentA', [selectors.selector1, selectors.selector2]);    
     </script>
     
     <div>
