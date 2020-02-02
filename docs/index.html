@@ -10,7 +10,8 @@
     <script src="https://kit.fontawesome.com/066699e1d2.js" crossorigin="anonymous"></script>
     <style>
       body {
-        margin: 0
+        color: white;
+        margin: 0;
       }
 
       .backgroundImage {
@@ -25,6 +26,10 @@
       a {
         color: white;
         text-decoration: none;
+      }
+
+      a.blue {
+        color: #0088ff;
       }
 
       a:hover {
@@ -96,10 +101,19 @@
       }
 
       .content {
-        width: 1280px;
+        width: 1024px;
         margin-left: auto;
         margin-right: auto;
         margin-top: 100px;
+      }
+
+      @media only screen and (min-width: 1280px) {
+        .content {
+          width: 1280px;
+          margin-left: auto;
+          margin-right: auto;
+          margin-top: 100px;
+        }
       }
 
       .tabs {
@@ -147,7 +161,13 @@
       }
 
       code {
-        font-size: 18px;
+        font-size: 15.3px;
+      }
+
+      @media only screen and (min-width: 1280px) {
+        code {
+          font-size: 18px;
+        }
       }
 
       code.orange {
@@ -155,7 +175,7 @@
       }
 
       code.lightGreen {
-        color: #80FFBB;
+        color: #80ffbb;
       }
 
       code.pink {
@@ -163,11 +183,35 @@
       }
 
       code.yellow {
-        color: #FFDD00;
+        color: #ffdd00;
       }
 
       code.green {
-       color: #3ad900;
+        color: #3ad900;
+      }
+
+      ul {
+        color: white;
+        font-family: 'Red Hat Display', sans-serif;
+        font-size: 20px;
+        font-weight: bold;
+        display: block;
+        list-style-type: disc;
+        margin-bottom: 50px;
+      }
+
+      li {
+        padding-bottom: 5px;
+      }
+
+      footer {
+        font-family: 'Red Hat Display', sans-serif;
+        font-size: 20px;
+        margin-bottom: 25px;
+      }
+
+      footer div {
+        text-align: center;
       }
     </style>
     <script>
@@ -279,9 +323,9 @@
         <span id="svelteTab" class="tab" onclick="selectSvelteTab()">SVELTE</span>
         <span id="vueTab" class="tab" onclick="selectVueTab()">VUE</span>
       </div>
-        <h2>Store</h2>
-        <div class="codeBlock">
-          <pre><code class="orange">const initialState = {
+      <h2>Store</h2>
+      <div class="codeBlock">
+        <pre><code class="orange">const initialState = {
   todosState: createSubState(initialTodoListState)
 };
 
@@ -291,10 +335,11 @@ const selectors = combineSelectors([
   createTodoListStateSelectors&lt;State&gt;()
 ]);
 
-export default createStore(initialState, selectors);</code></pre></div>
-        <h2>State</h2>
-        <div class="codeBlock">
-          <pre><code class="orange">export interface Todo {
+export default createStore(initialState, selectors);</code></pre>
+      </div>
+      <h2>State</h2>
+      <div class="codeBlock">
+        <pre><code class="orange">export interface Todo {
   name: string;
   isDone: boolean;
 }
@@ -304,10 +349,11 @@ export default {
   isFetchingTodos: false,
   hasTodosFetchFailure: false
 };
-</code></pre></div>
-        <h2>Selectors</h2>
-        <div class="codeBlock">
-          <pre><code class="orange">const createTodoListStateSelectors = &lt;T extends State&gt;() =&gt; ({
+</code></pre>
+      </div>
+      <h2>Selectors</h2>
+      <div class="codeBlock">
+        <pre><code class="orange">const createTodoListStateSelectors = &lt;T extends State&gt;() =&gt; ({
   shownTodos: (state: T) =&gt;
     state.todosState.todos.filter(
       (todo: Todo) =&gt;
@@ -317,10 +363,11 @@ export default {
   todoCount: (state: T) =&gt; state.todosState.todos.length,
   unDoneTodoCount: (state: T) =&gt; state.todosState.todos.filter((todo: Todo) =&gt; !todo.isDone).length
 });
-            </code></pre></div>
-        <h2>Actions</h2>
-        <div class="codeBlock">
-          <pre><code class="orange">export async function fetchTodos(): Promise&lt;void&gt; {
+            </code></pre>
+      </div>
+      <h2>Actions</h2>
+      <div class="codeBlock">
+        <pre><code class="orange">export async function fetchTodos(): Promise&lt;void&gt; {
   const { todosState } = store.getState();
 
   todosState.isFetchingTodos = true;
@@ -344,8 +391,9 @@ export function removeTodo(todoToRemove: Todo): void {
 
 export function toggleIsDoneTodo(todo: Todo): void {
   todo.isDone = !todo.isDone;
-}</code></pre></div>
-      <div  id="angularContent">
+}</code></pre>
+      </div>
+      <div id="angularContent">
         <h2>View</h2>
         <div class="codeBlock">
           <pre><code class="lightGreen">@Component({
@@ -382,8 +430,22 @@ export class TodoListComponent implements OnInit, OnDestroy {
     fetchTodos();
   }</code></pre>
         </div>
+        <ul>
+          <li>
+            See
+            <a class="blue" href="https://www.github.com/universal-model/universal-model-angular"
+              >installation, API and example</a
+            >
+          </li>
+          <li>
+            See
+            <a class="blue" href="https://www.github.com/universal-model/universal-model-angular-todo-app"
+              >source code of full example</a
+            >
+          </li>
+        </ul>
       </div>
-      <div id="reactContent">
+      <div style="display: none" id="reactContent">
         <h2>View</h2>
         <div class="codeBlock">
           <pre><code class="pink">const TodoListView = () =&gt; {
@@ -424,9 +486,24 @@ export class TodoListComponent implements OnInit, OnDestroy {
       {todoListContent}
     &lt;/div&gt;
   );
-};</code></pre></div>
+};</code></pre>
+        </div>
+        <ul>
+          <li>
+            See
+            <a class="blue" href="https://www.github.com/universal-model/universal-model-react"
+              >installation, API and example</a
+            >
+          </li>
+          <li>
+            See
+            <a class="blue" href="https://www.github.com/universal-model/universal-model-react-todo-app"
+              >source code of full example</a
+            >
+          </li>
+        </ul>
       </div>
-      <div id="svelteContent">
+      <div style="display: none" id="svelteContent">
         <h2>View</h2>
         <div class="codeBlock">
           <pre><code class="yellow">&lt;script&gt;
@@ -458,9 +535,24 @@ export class TodoListComponent implements OnInit, OnDestroy {
       {/each}
     &lt;/ul&gt;
   {/if}
-&lt;/div&gt;</code></pre></div>
+&lt;/div&gt;</code></pre>
+        </div>
+        <ul>
+          <li>
+            See
+            <a class="blue" href="https://www.github.com/universal-model/universal-model-svelte"
+              >installation, API and example</a
+            >
+          </li>
+          <li>
+            See
+            <a class="blue" href="https://www.github.com/universal-model/universal-model-svelte-todo-app"
+              >source code of full example</a
+            >
+          </li>
+        </ul>
       </div>
-      <div id="vueContent">
+      <div style="display: none" id="vueContent">
         <h2>View</h2>
         <div class="codeBlock">
           <pre><code class="green">&lt;template&gt;
@@ -494,8 +586,27 @@ export default {
     };
   }
 };
-&lt;/script&gt;</code></pre></div>
+&lt;/script&gt;</code></pre>
+        </div>
+        <ul>
+          <li>
+            See
+            <a class="blue" href="https://www.github.com/universal-model/universal-model-svelte"
+              >installation, API and example</a
+            >
+          </li>
+          <li>
+            See
+            <a class="blue" href="https://www.github.com/universal-model/universal-model-svelte-todo-app"
+              >source code of full example</a
+            >
+          </li>
+        </ul>
       </div>
+      <footer>
+        <div>License MIT</div>
+        <div>Copyright <i class="far fa-copyright"></i> 2020-Present Petri Silén</div>
+      </footer>
     </div>
   </body>
 </html>
