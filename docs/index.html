@@ -213,6 +213,13 @@
       footer div {
         text-align: center;
       }
+
+      .text {
+        font-family: 'Red Hat Display', sans-serif;
+        font-size: 18px;
+        margin-top: 15px;
+        margin-bottom: 25px;
+      }
     </style>
     <script>
       window.selectReactTab = function() {
@@ -322,6 +329,10 @@
         <span id="reactTab" class="tab" onclick="selectReactTab()">REACT</span>
         <span id="svelteTab" class="tab" onclick="selectSvelteTab()">SVELTE</span>
         <span id="vueTab" class="tab" onclick="selectVueTab()">VUE</span>
+      </div>
+      <div class="text">
+        Universal model provides unified state management:
+        store, states, actions and selectors are same for every UI framework, only view parts differ.
       </div>
       <h2>Store</h2>
       <div class="codeBlock">
