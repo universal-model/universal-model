@@ -425,7 +425,7 @@ export function toggleIsDoneTodo(todo: Todo): void {
   `,
   styleUrls: []
 })
-export class TodoListComponent implements OnInit, OnDestroy {
+export class TodoListComponent implements OnInit {
   todosState: typeof initialTodosState;
   shownTodos: Todo[];
   toggleIsDoneTodo = toggleIsDoneTodo;
