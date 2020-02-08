@@ -19,7 +19,7 @@ Universal model is a model which can be used with any combination of following U
 * State changes trigger view updates
 * Selectors select and calculate a transformed version of state that causes view updates
 * Views contain NO business logic
-* There can be multiple interchangable views that use same part of model
+* There can be multiple interchangeable views that use same part of model
 * A new view can be created to represent model differently without any changes to model
 * View technology can be changed without changes to the model
     
