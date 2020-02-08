@@ -1,4 +1,4 @@
-import { Ref, UnwrapRef, ComputedRef, reactive, computed, StopHandle, watch } from 'vue';
+import { Ref, UnwrapRef, ComputedRef, reactive, computed, StopHandle, watch } from '@pksilen/reactive-js';
 import { SubStateFlagWrapper } from './createSubState';
 import { useEffect, useState } from 'react';
 import { Writable, writable } from 'svelte/store';
@@ -60,64 +60,48 @@ export default class Store<T extends State, U extends SelectorsBase<T>> {
     return [this.reactiveState, this.reactiveSelectors];
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  useStateAndSelectorsReact(subStates: SubState[], selectors: ComputedRef<any>[]): void {
+  useStateAndSelectorsReact(subStates: SubState[], selectors: ComputedRef[]): void {
     const [view, updateView] = useState({});
 
     useEffect(() => {
       const stopWatches = [] as StopHandle[];
-
-      subStates.forEach((subState: SubState) => {
-        if (!subState.__isSubState__) {
-          throw new Error('useState: One of given subStates is not subState');
-        }
-
-        stopWatches.push(
-          watch(
-            () => subState,
-            () => {
-              if (!this.viewToNeedsUpdateMap.get(view)) {
-                setTimeout(() => {
-                  this.viewToNeedsUpdateMap.delete(view);
-                  updateView({});
-                }, 0);
-              }
-
-              this.viewToNeedsUpdateMap.set(view, true);
-            },
-            {
-              deep: true,
-              flush: 'sync'
-            }
-          )
-        );
-      });
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      selectors.forEach((selector: any) => {
-        stopWatches.push(
-          watch(
-            () => selector,
-            () => {
-              if (!this.viewToNeedsUpdateMap.get(view)) {
-                setTimeout(() => {
-                  this.viewToNeedsUpdateMap.delete(view);
-                  updateView({});
-                }, 0);
-              }
-
-              this.viewToNeedsUpdateMap.set(view, true);
-            },
-            {
-              deep: true,
-              flush: 'sync'
-            }
-          )
-        );
-      });
-
+      this.watchSubStatesAndSelectors(subStates, stopWatches, view, updateView);
+      this.watchSubStatesAndSelectors(selectors, stopWatches, view, updateView);
       return () => stopWatches.forEach((stopWatch: StopHandle) => stopWatch());
     }, []);
+  }
+
+  watchSubStatesAndSelectors(
+    subStates: SubState[] | ComputedRef[],
+    stopWatches: StopHandle[],
+    view: {},
+    updateView: (newState: {}) => void
+  ): void {
+    subStates.forEach((subState: SubState | ComputedRef) => {
+      if (!('effect' in subState) && !subState.__isSubState__) {
+        throw new Error('useState: One of given subStates is not subState');
+      }
+
+      stopWatches.push(
+        watch(
+          () => subState,
+          () => {
+            if (!this.viewToNeedsUpdateMap.get(view)) {
+              setTimeout(() => {
+                this.viewToNeedsUpdateMap.delete(view);
+                updateView({});
+              }, 0);
+            }
+
+            this.viewToNeedsUpdateMap.set(view, true);
+          },
+          {
+            deep: true,
+            flush: 'sync'
+          }
+        )
+      );
+    });
   }
 
   useStateReact(subStates: SubState[]): void {
@@ -125,67 +109,17 @@ export default class Store<T extends State, U extends SelectorsBase<T>> {
 
     useEffect(() => {
       const stopWatches = [] as StopHandle[];
-
-      subStates.forEach((subState: SubState) => {
-        if (!subState.__isSubState__) {
-          throw new Error('useState: One of given subStates is not subState');
-        }
-
-        stopWatches.push(
-          watch(
-            () => subState,
-            () => {
-              if (!this.viewToNeedsUpdateMap.get(view)) {
-                setTimeout(() => {
-                  this.viewToNeedsUpdateMap.delete(view);
-                  updateView({});
-                }, 0);
-              }
-
-              this.viewToNeedsUpdateMap.set(view, true);
-            },
-            {
-              deep: true,
-              flush: 'sync'
-            }
-          )
-        );
-      });
-
+      this.watchSubStatesAndSelectors(subStates, stopWatches, view, updateView);
       return () => stopWatches.forEach((stopWatch: StopHandle) => stopWatch());
     }, []);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  useSelectorsReact(selectors: ComputedRef<any>[]): void {
+  useSelectorsReact(selectors: ComputedRef[]): void {
     const [view, updateView] = useState({});
 
     useEffect(() => {
       const stopWatches = [] as StopHandle[];
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      selectors.forEach((selector: any) => {
-        stopWatches.push(
-          watch(
-            () => selector,
-            () => {
-              if (!this.viewToNeedsUpdateMap.get(view)) {
-                setTimeout(() => {
-                  this.viewToNeedsUpdateMap.delete(view);
-                  updateView({});
-                }, 0);
-              }
-
-              this.viewToNeedsUpdateMap.set(view, true);
-            },
-            {
-              deep: true,
-              flush: 'sync'
-            }
-          )
-        );
-      });
-
+      this.watchSubStatesAndSelectors(selectors, stopWatches, view, updateView);
       return () => stopWatches.forEach((stopWatch: StopHandle) => stopWatch());
     }, []);
   }

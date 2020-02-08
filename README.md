@@ -24,21 +24,26 @@ Universal model is a model which can be used with any combination of following U
 * View technology can be changed without changes to the model
     
 ## Clean UI Code directory layout
+UI application is divided into UI components. Common UI components should be put into common directory. Each component
+can consist of subcomponents. Each component has a view and optionally controller and model. Model consists of actions, state
+and selectors. In large scale apps, model can contain sub-store. Application has one store which is composed of each components'
+state (or sub-stores)
 
     - src
       |
       |- common
       |  |- component1
       |  |- component2
-      |     |- component2_1
-      |     .
-      |     .
+      |  . |- component2_1
+      |  . 
+      |  . 
+      |  .
       |- componentA
       |- componentB
       |  |- componentB_1
       |  |- componentB_2
       |- componentC
-      |- |- view
+      |  |- view
       |  .
       |  .
       |- componentN
@@ -47,7 +52,7 @@ Universal model is a model which can be used with any combination of following U
       |  |  |- actions
       |  |  |- services
       |  |  |- state
-      |  |- view 
+      |  |- view
       |- store
       
 ## API
@@ -84,6 +89,10 @@ Universal model is a model which can be used with any combination of following U
     
 **Create selectors**
 
+When using foreign state inside selectors, prefer creating foreign state selectors and accessing foreign
+state through them instead of directly accessing foreign state inside selector. This will ensure  better
+encapsulation of component state.
+
     const createComponentASelectors = <T extends State>() => ({
       selector1: (state: State) => state.componentAState.prop1  + state.componentAState.prop2
       selector2: (state: State) => {
@@ -93,71 +102,67 @@ Universal model is a model which can be used with any combination of following U
     });
     
 **Create and export store in store.ts:**
+
+combineSelectors() checks if there are duplicate keys in selectors and will throw an error telling which key was duplicated.
+By using combineSelectors you can keep your selector names short and only namespace them if needed.
     
     const initialState = {
       componentAState: createSubState(initialComponentAState),
-      
-      componentBState: createSubState(initialComponentBState),
-      componentB_1State: createSubState(initialComponentB_1State),
-      component1ForComponentBState: createSubState(initialComponent1State),
-      component2ForComponentBState: createSubState(initialComponent2State),
-      .
-      .
+      componentBState: createSubState(initialComponentBState)
     };
     
     export type State = typeof initialState;
     
-    const selectors = combineSelectors([
-      createComponentAStateSelectors<State>(),
-      createComponentBStateSelectors<State>(),
-      createComponentB_1StateSelectors<State>(),
-      createComponent1Selectors<State>('componentB');
-      createComponent2Selectors<State>('componentB');
-      .
-      .
-    ]);
+    const componentAStateSelectors = createComponentAStateSelectors<State>();
+    const componentBStateSelectors = createComponentBStateSelectors<State>();
     
-    export default createStore(initialState, selectors);
+    const selectors = combineSelectors<State, typeof componentAStateSelectors, typeof componentBStateSelectors>(
+      componentAStateSelectors,
+      componentBStateSelectors
+    );
     
-in large projects you should have sub stores for components and these sub store are combined 
+    export default createStore<State, typeof selectors>(initialState, selectors);
+    
+in large projects you should have sub-stores for components and these sub-store are combined 
 together to a single store in store.js:
 
-componentBStore.js
+**componentBStore.js**
 
-    const componentBnitialState = { 
+    const componentBInitialState = { 
       componentBState: createSubState(initialComponentBState),
       componentB_1State: createSubState(initialComponentB_1State),
-      component1ForComponentBState: createSubState(initialComponent1State),
-      component2ForComponentBState: createSubState(initialComponent2State),  
+      component1ForComponentBState: createSubState(initialComponent1State) 
     };
     
-    const componentBSelectors = combineSelectors([
-      createComponentBStateSelectors<State>(),
-      createComponentB_1StateSelectors<State>(),
-      createComponent1Selectors<State>('componentB');
-      createComponent2Selectors<State>('componentB');
-    ]);
+    const componentBStateSelectors = createComponentBStateSelectors<State>();
+    const componentB_1StateSelectors = createComponentB_1StateSelectors<State>();
+    const component1ForComponentBSelectors = createComponent1Selectors<State>('componentB');
     
-store.js
+    const componentBSelectors = combineSelectors<State, typeof componentBStateSelectors, typeof componentB_1StateSelectors, typeof component1ForComponentBSelectors>(
+      componentBStateSelectors,
+      componentB_1StateSelectors,
+      component1ForComponentBSelectors
+    );
+    
+**store.js**
 
     const initialState = {
-       ...componentAInitialState,
-       ...componentBInitialState,
-       .
-       .
-       ...componentNInitialState
+      ...componentAInitialState,
+      ...componentBInitialState,
+      .
+      ...componentNInitialState
     };
           
     export type State = typeof initialState;
         
-    const selectors = combineSelectors([
+    const selectors = combineSelectors<State, typeof componentASelectors, typeof componentBSelectors, ... typeof componentNSelectors>([
       componentASelectors,
       componentBSelectors,
-      ...
+      .
       componentNSelectors
     ]);
         
-    export default createStore(initialState, selectors);
+    export default createStore<State, typeof selectors>(initialState, selectors);
     
 **Access store in Actions**
 
@@ -200,7 +205,7 @@ Components should use only their own state and access other components' states u
 provided by those components. This will ensure encapsulation of each component's state.
     
     const View = () => {
-      const { componentAState, { selector1, selector2 } = store.getStateAndSelectors();
+      const [{ componentAState, { selector1, selector2 }] = store.getStateAndSelectors();
       useStateAndSelectorsReact([componentAState], [selector1, selector2]);
       
       // NOTE! Get the value of a selector using it's 'value' property!
@@ -219,9 +224,8 @@ provided by those components. This will ensure encapsulation of each component's
       // Action
       changeComponentAState = changeComponentAState
       
-      
       constructor() {
-        const { componentAState, { selector1, selector2 } = store.getStateAndSelectors();
+        const [{ componentAState, { selector1, selector2 }] = store.getStateAndSelectors();
         useStateAndSelectors(this, { componentAState: state }, { selector1, selector2 });
       }
     }
