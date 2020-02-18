@@ -70,7 +70,7 @@ state (or sub-stores)
     const { selector1, selector2 } = store.getSelectors();
     const [{ componentAState }, { selector1, selector2 }] = store.getStateAndSelectors();
     
-[Detailed Common & Vue API documentation](https://github.com/universal-model/universal-model-vue/blob/master/docs/VUE_API.md)
+[Detailed Common & Vue API documentation](https://github.com/universal-model/universal-model-vue/blob/master/docs/API.md)
 
     
 ### React
