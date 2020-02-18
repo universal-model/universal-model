@@ -1,5 +1,10 @@
 # Universal Model for Angular/React/Vue/Svelte
 
+[![version][version-badge]][package]
+[![Downloads][Downloads]][package]
+[![build][build]][circleci]
+[![MIT License][license-badge]][license]
+
 Universal model is a model which can be used with any combination of following UI frameworks:
 * Angular 2+ 
 * React 16.8+ 
@@ -65,19 +70,31 @@ state (or sub-stores)
     const { selector1, selector2 } = store.getSelectors();
     const [{ componentAState }, { selector1, selector2 }] = store.getStateAndSelectors();
     
+[Detailed Common & Vue API documentation](https://github.com/universal-model/universal-model-vue/blob/master/docs/VUE_API.md)
+
+    
 ### React
     useStateReact([componentAState]);
     useSelectorsReact([selector1, selector2]);
     useStateAndSelectorsReact([componentAState], [selector1, selector2]);
+
+[Detailed React API documentation](https://github.com/universal-model/universal-model/blob/master/docs/REACT_API.md)
+
      
 ### Angular
     useStateNg(this, { componentAState });
     useSelectorsNg(this, { selector1, selector2 });
     useStateAndSelectorsNg(this, { componentAState }, { selector1, selector2 });
     
+[Detailed Angular API documentation](https://github.com/universal-model/universal-model/blob/master/docs/ANGULAR_API.md)
+
+    
 ### Svelte
-    const [componentAState] = useStateSvelter(id, [state.componentAState]);
+    const [componentAState] = useStateSvelte(id, [state.componentAState]);
     const [selector1, selector2] = useSelectorsSvelte(id, [selectors.selector1, selectors.selector2]);
+    
+[Detailed Svelte API documentation](https://github.com/universal-model/universal-model/blob/master/docs/SVELTE_API.md)
+
 
 ## API Examples
 **Create initial states**
@@ -126,40 +143,40 @@ By using combineSelectors you can keep your selector names short and only namesp
 in large projects you should have sub-stores for components and these sub-store are combined 
 together to a single store in store.js:
 
-**componentBStore.js**
+**componentBSubStore.js**
 
-    const componentBInitialState = { 
+    export const initialComponentsBState = { 
       componentBState: createSubState(initialComponentBState),
       componentB_1State: createSubState(initialComponentB_1State),
-      component1ForComponentBState: createSubState(initialComponent1State) 
+      componentB_2State: createSubState(initialComponentB_2State),
     };
     
     const componentBStateSelectors = createComponentBStateSelectors<State>();
     const componentB_1StateSelectors = createComponentB_1StateSelectors<State>();
-    const component1ForComponentBSelectors = createComponent1Selectors<State>('componentB');
+    const componentB_2StateSelectors = createComponentB_2Selectors<State>('componentB');
     
-    const componentBSelectors = combineSelectors<State, typeof componentBStateSelectors, typeof componentB_1StateSelectors, typeof component1ForComponentBSelectors>(
+    const componentsBStateSelectors = combineSelectors<State, typeof componentBStateSelectors, typeof componentB_1StateSelectors, typeof componentB_2StateSelectors>(
       componentBStateSelectors,
       componentB_1StateSelectors,
-      component1ForComponentBSelectors
+      componentB_2StateSelectors
     );
     
 **store.js**
 
     const initialState = {
-      ...componentAInitialState,
-      ...componentBInitialState,
+      ...initialComponentsAState,
+      ...initialComponentsBState,
       .
-      ...componentNInitialState
+      ...initialComponentsNState
     };
           
     export type State = typeof initialState;
         
-    const selectors = combineSelectors<State, typeof componentASelectors, typeof componentBSelectors, ... typeof componentNSelectors>(
-      componentASelectors,
-      componentBSelectors,
+    const selectors = combineSelectors<State, typeof componentsAStateSelectors, typeof componentsBStateSelectors, ... typeof componentsNStateSelectors>(
+      componentsAStateSelectors,
+      componentsBStateSelectors,
       .
-      componentNSelectors
+      componentsNStateSelectors
     );
         
     export default createStore<State, typeof selectors>(initialState, selectors);
@@ -246,6 +263,18 @@ provided by those components. This will ensure encapsulation of each component's
       {$selector1} ...
     <div>
 
+### Dependency injection
+If you would like to use dependency injection (noicejs) in your app, check out this [example],
+where DI is used to create services.
+
 ### License
 MIT License
 
+[license-badge]: https://img.shields.io/badge/license-MIT-green
+[license]: https://github.com/universal-model/universal-model/blob/master/LICENSE
+[version-badge]: https://img.shields.io/npm/v/universal-model-ng-react-svelte-vue.svg?style=flat-square
+[package]: https://www.npmjs.com/package/universal-model-ng-react-svelte-vue
+[build]: https://img.shields.io/circleci/project/github/universal-model/universal-model/master.svg?style=flat-square
+[circleci]: https://circleci.com/gh/universal-model/universal-model/tree/master
+[example]: https://github.com/universal-model/react-todo-app-with-dependency-injection
+[Downloads]: https://img.shields.io/npm/dm/universal-model-ng-react-svelte-vue

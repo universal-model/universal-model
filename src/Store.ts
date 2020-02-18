@@ -183,6 +183,7 @@ export default class Store<T extends State, U extends SelectorsBase<T>> {
     const originalOnDestroy = componentInstance.ngOnDestroy;
     componentInstance.ngOnDestroy = () => {
       this.stateStopWatches.get(componentInstance).forEach((stopWatch: StopHandle) => stopWatch());
+      this.stateStopWatches.delete(componentInstance);
       if (originalOnDestroy) {
         originalOnDestroy();
       }
@@ -235,6 +236,7 @@ export default class Store<T extends State, U extends SelectorsBase<T>> {
     const originalOnDestroy = componentInstance.ngOnDestroy;
     componentInstance.ngOnDestroy = () => {
       this.selectorStopWatches.get(componentInstance).forEach((stopWatch: StopHandle) => stopWatch());
+      this.stateStopWatches.delete(componentInstance);
       if (originalOnDestroy) {
         originalOnDestroy();
       }
