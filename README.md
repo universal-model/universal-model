@@ -267,6 +267,9 @@ provided by those components. This will ensure encapsulation of each component's
 If you would like to use dependency injection (noicejs) in your app, check out this [example],
 where DI is used to create services.
 
+### Donate/Sponsor
+If you would like to help me to develop more great stuff, you can [donate](https://paypal.me/pksilen) or [sponsor](https://patreon.com/pksilen). Thank you!
+
 ### License
 MIT License
 
